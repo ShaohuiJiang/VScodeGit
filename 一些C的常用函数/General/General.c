@@ -267,38 +267,220 @@ unsigned long BCD4_Long(unsigned char *Ptr)
  * @param  n: 加数
  * @param  m: 被加数
  * @param  *carry: 向上一高字节进位标志放在了carry中  
- * @retval 结果
+ * @retval 返回结果
  */
 unsigned char Add_Bcd_1(unsigned char n,unsigned char m,unsigned char *carry)	
 {
-	unsigned char i,j,w;
-	m=m+(*carry);
-	*carry=0;
-	j=n&0x0f;
-	i=m&0x0f;
-	i+=j;
-	w=0;
-	if(i>9)
-	{
-		w=0x01;
-		i-=10;
-	}
-	j=n;
-	j>>=4;		
-	m>>=4;
-	j=j+m+w;
-	if(j>0x09)
-	{
-		j-=10;
-		j<<=4;
-		n=j+i;
-		*carry=1;
-		return(n);
-	}
-	j<<=4;
-	n=j+i;
-	*carry=0;
-	return(n);
+    unsigned char i,j,w;
+    m=m+(*carry);
+    *carry=0;
+    j=n&0x0f;
+    i=m&0x0f;
+    i+=j;
+    w=0;
+    if(i>9)
+    {
+        w=0x01;
+        i-=10;
+    }
+    j=n;
+    j>>=4;		
+    m>>=4;
+    j=j+m+w;
+    if(j>0x09)
+    {
+        j-=10;
+        j<<=4;
+        n=j+i;
+        *carry=1;
+        return(n);
+    }
+    j<<=4;
+    n=j+i;
+    *carry=0;
+    return(n);
 }
 
+/** 
+ * @brief  Len字节BCD码加法
+ * @note   
+ * @param  *BufA: 被加数
+ * @param  *BufB: 加数
+ * @param  Len: 长度
+ * @retval 0:没有溢出，结果可信
+ * @retval 1:有进位，已经溢出，结果不可信
+ */
+unsigned char Add_Bcd( unsigned char *BufA, unsigned char *BufB, unsigned char Len )
+{
+    unsigned char i;
+    unsigned char bf_carry;
+    bf_carry=0;
+    for(i=(Len-1);i<Len;i--)
+    {
+        BufA[i]=Add_Bcd_1(BufA[i],BufB[i],&bf_carry);
+    }
+    
+    return bf_carry;
+}
+
+
+/** 
+ * @brief  Len字节BCD码减法
+ * @note   
+ * @param  *BufA: 被减数
+ * @param  *BufB: 减数
+ * @param  Len: 长度
+ * @retval 0：代表被减数大于等于减数，结果值可信
+ * @retval 1：代表被减数小于减数，结果值是通过向更高位借来的。	结果不可信
+ */
+unsigned char Sub_Bcd( unsigned char *BufA, unsigned char *BufB, unsigned char Len )
+{
+    unsigned char i,j,k;
+    unsigned char bf_carry;
+    bf_carry=0;
+    for(i=(Len-1);i<Len;i--)
+    {
+        j=BufB[i]+bf_carry;
+        k=0;
+        if(j<BufB[i])
+        k=1;
+        bf_carry=0;
+        if((BufA[i]&0x0f)<(j&0x0f))
+        {
+            if(BufA[i]<j)
+            {
+                BufA[i]=0x9a-j+BufA[i];         //0xa0-6;
+                bf_carry=1;
+            }
+            else
+                BufA[i]=BufA[i]-j-6;
+        }
+        else
+        {
+            if(BufA[i]<j)
+            {
+                BufA[i]=0xa0-j+BufA[i];
+                bf_carry=1;
+            }
+            else
+                BufA[i]=BufA[i]-j;
+        }
+        if(k)
+            bf_carry=1;		//由于k=1时，不会产生借位
+    }
+    
+    return bf_carry;
+}
+
+
+
+/*数组判断及处理算法*/
+
+/** 
+ * @brief  检查字节数组数据是否为全零
+ * @note   
+ * @param  *Buf: 数组起始地址
+ * @param  Len: 数组长度
+ * @retval 0:代表数组元素为全零
+ * @retval 1:代表数组元素存在非零
+ */
+ unsigned char ChkBufZero( unsigned char *Buf,unsigned char Len )
+{
+    unsigned char i;
+
+    for( i=0; i<Len; i++ )
+    {
+        if( Buf[i] )    return(1);  //非0
+    }
+
+    return(0);  //全0
+}
+
+
+/** 
+ * @brief  默认比较的数组是高位在前然后两者数组比较的函数
+ * @note   *BufA是最高位，*BufB是最高位
+ * @param  *BufA: 被比较数
+ * @param  *BufB: 被比较数
+ * @param  Len: 数组长度
+ * @retval 1:A>B
+ * @retval 2:A<B
+ * @retval 3:A=B
+ */
+unsigned char Cmp_Data( unsigned char *BufA, unsigned char *BufB, unsigned char Len )
+{
+    unsigned char i;
+
+    for( i=0; i<Len; i++ )
+    {
+        if( BufA[i] > BufB[i] )
+        {
+            return 1; //A>B
+        }
+        else
+        {
+            if( BufA[i] < BufB[i] )
+            {
+                return 2; //A<B
+            }
+        }
+    }
+
+    return 3; //A=B
+}
+
+
+/** 
+ * @brief  默认比较的数组是低位在前，然后两者数组比较的函数
+ * @note   *BcdA是最低位，*BcdB是最低位
+ * @param  *BcdA: 
+ * @param  *BcdB: 
+ * @param  Len: 比较的长度
+ * @retval 0：A=B
+ * @retval 1：A>B
+ * @retval 2：A<B
+ */
+unsigned char Cmp_Bcd_Inv( unsigned char *BcdA, unsigned char *BcdB, unsigned char Len )
+{
+    unsigned char i;
+
+    for( i=0; i<Len; i++ )
+    {
+        if( BcdA[Len-1-i] > BcdB[Len-1-i] )
+        {
+            return 1; //A > B
+        }
+        else
+        {
+            if( BcdA[Len-1-i] < BcdB[Len-1-i] )
+            {
+                return 2; //A < B
+            }
+        }
+    }
+
+    return 0; //A==B
+}
+
+
+
+/** 
+ * @brief  多字节数组高低位字节交换
+ * @note    举个例子：0x1234====》0x3412，是以一个字节为最小单位进行交换
+ * @param  Dest: 目标数据
+ * @param  Len: 数组长度
+ * @retval None
+ */
+void SwapData( unsigned char* Dest, int Len )
+{
+	unsigned char Temp;
+	int i;
+	
+	for( i=0;i<Len/2;i++ )
+	{
+		Temp = *(Dest+Len-1-i);	
+		*(Dest+Len-1-i) = *(Dest+i);
+		*(Dest+i) = Temp; 
+	}	
+}
 /*end-------------------------------------------------------------------------*/
