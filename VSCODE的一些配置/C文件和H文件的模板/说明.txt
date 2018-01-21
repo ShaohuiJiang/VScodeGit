@@ -2,3 +2,10 @@
 1、首先在插件商店中搜索“Flie Templates for VSCode” 作者是Venkatesh Boddu；
 2、安装好之后，将C.c和H.h文件存放到C:\Users\XXXX\.vscode\extensions\bam.vscode-file-templates-1.1.0\templates
 3、具体使用方法看商店里有说明。
+
+其他插件：
+1、名称：C-family Documentation Comments  作者：Aleksei Tlt
+2、名称：C/C++                            作者：Microsoft
+3、名称：C/C++ Clang Command Adapter      作者：Yasuaki MITANI
+4、名称：C/C++ Snippets                   作者：Harsh
+5、名称：GBKtoUTF8                        作者：bukas
