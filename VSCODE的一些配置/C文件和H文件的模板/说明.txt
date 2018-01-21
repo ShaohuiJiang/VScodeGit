@@ -1,0 +1,4 @@
+关于vscode中模板文件的使用方法：
+1、首先在插件商店中搜索“Flie Templates for VSCode” 作者是Venkatesh Boddu；
+2、安装好之后，将C.c和H.h文件存放到C:\Users\XXXX\.vscode\extensions\bam.vscode-file-templates-1.1.0\templates
+3、具体使用方法看商店里有说明。
