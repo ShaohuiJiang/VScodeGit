@@ -47,5 +47,7 @@ extern unsigned char ChkBufZero( unsigned char *Buf,unsigned char Len );
 extern unsigned char Cmp_Data( unsigned char *BufA, unsigned char *BufB, unsigned char Len );
 extern unsigned char Cmp_Bcd_Inv( unsigned char *BcdA, unsigned char *BcdB, unsigned char Len );
 extern void SwapData( unsigned char* Dest, int Len );
+
+
 #endif
 /*end------------------------------------------------------------------------*/
