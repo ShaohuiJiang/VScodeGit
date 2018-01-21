@@ -52,7 +52,7 @@
  * @param  i: 0<i≤65535
  * @retval None
  */
-void Delay( unsigned int i )
+extern void Delay( unsigned int i )
 {
     while( i > 0)
     {
@@ -70,7 +70,7 @@ void Delay( unsigned int i )
  * @param  Len:  字节数据的个数，0<Len≤65535
  * @retval 
  */
-unsigned char ChkNum( unsigned char *Ptr, int Len )
+extern unsigned char ChkNum( unsigned char *Ptr, int Len )
 {
     unsigned char Num = 0xA5;
    
@@ -90,7 +90,7 @@ unsigned char ChkNum( unsigned char *Ptr, int Len )
  * @param  Len:  字节数据的个数，0<Len≤65535
  * @retval 
  */
-unsigned char ChkNumAdd( unsigned char *Ptr, int Len )
+extern unsigned char ChkNumAdd( unsigned char *Ptr, int Len )
 {
     unsigned char Num = 0x00;
    
@@ -111,7 +111,7 @@ unsigned char ChkNumAdd( unsigned char *Ptr, int Len )
  * @param  Data: 无符号字节数  0x00≤Data≤0x63
  * @retval 一个字节BCD码
  */
-unsigned char Byte_BCD(unsigned char Data)
+extern unsigned char Byte_BCD(unsigned char Data)
 {
     if(Data>=99) return 0x99;
 
@@ -126,7 +126,7 @@ unsigned char Byte_BCD(unsigned char Data)
  * @param  Data: 无符号2字节数据，0x00≤Data≤0x270F
  * @retval None
  */
-void Word_BCD(unsigned char *Ptr, unsigned int Data)
+extern void Word_BCD(unsigned char *Ptr, unsigned int Data)
 {
     if(Data>=9999)
     {
@@ -147,7 +147,7 @@ void Word_BCD(unsigned char *Ptr, unsigned int Data)
  * @param  Data: 无符号4字节数据，0≤Data≤0x000F423F
  * @retval None
  */
-void Long_BCD3(unsigned char *Ptr, unsigned long Data)
+extern void Long_BCD3(unsigned char *Ptr, unsigned long Data)
 {
     if(Data>=999999)
     {
@@ -169,7 +169,7 @@ void Long_BCD3(unsigned char *Ptr, unsigned long Data)
  * @param  Data: 无符号4字节数据，0≤Data≤0x05F5E0FF
  * @retval None
  */
-void Long_BCD4(unsigned char *Ptr, unsigned long Data)
+extern void Long_BCD4(unsigned char *Ptr, unsigned long Data)
 {
     if(Data>=99999999)
     {
@@ -194,7 +194,7 @@ void Long_BCD4(unsigned char *Ptr, unsigned long Data)
  * @retval 0：不符合
  * @retval 1：符合
  */
-int IsBCD(unsigned char Data)
+extern int IsBCD(unsigned char Data)
 {
     if(((( Data >> 4) & 0x0f) > 9 )||( ( Data & 0x0f ) > 9 )) return 1;
     
@@ -211,7 +211,7 @@ int IsBCD(unsigned char Data)
  * @param  Data: BCD码
  * @retval hex码 
  */
-unsigned char BCD_Byte(unsigned char Data)
+extern unsigned char BCD_Byte(unsigned char Data)
 {
     return(((Data>>4)&0x0f)*10+(Data&0x0f));
 }
@@ -222,7 +222,7 @@ unsigned char BCD_Byte(unsigned char Data)
  * @param  *Ptr: 指向数组的起始地址
  * @retval int型的hex码 
  */
-unsigned int BCD2_Word(unsigned char *Ptr)
+extern unsigned int BCD2_Word(unsigned char *Ptr)
 {
    return(  (int)BCD_Byte(*Ptr)+
             (int)BCD_Byte(*(Ptr+1))*100 );
@@ -235,7 +235,7 @@ unsigned int BCD2_Word(unsigned char *Ptr)
  * @param  *Ptr: 指向数组的起始地址
  * @retval long型的hex码 
  */
-unsigned long BCD3_Long(unsigned char *Ptr)
+extern unsigned long BCD3_Long(unsigned char *Ptr)
 {
    return(  (long)BCD_Byte(*Ptr)+
             (long)BCD_Byte(*(Ptr+1))*100+
@@ -249,7 +249,7 @@ unsigned long BCD3_Long(unsigned char *Ptr)
  * @param  *Ptr: 指向数组的起始地址
  * @retval long型的hex码
  */
-unsigned long BCD4_Long(unsigned char *Ptr)
+extern unsigned long BCD4_Long(unsigned char *Ptr)
 {
    return(  (long)BCD_Byte(*Ptr)+
             (long)BCD_Byte(*(Ptr+1))*100+
@@ -269,7 +269,7 @@ unsigned long BCD4_Long(unsigned char *Ptr)
  * @param  *carry: 向上一高字节进位标志放在了carry中  
  * @retval 返回结果
  */
-unsigned char Add_Bcd_1(unsigned char n,unsigned char m,unsigned char *carry)	
+extern unsigned char Add_Bcd_1(unsigned char n,unsigned char m,unsigned char *carry)	
 {
     unsigned char i,j,w;
     m=m+(*carry);
@@ -310,7 +310,7 @@ unsigned char Add_Bcd_1(unsigned char n,unsigned char m,unsigned char *carry)
  * @retval 0:没有溢出，结果可信
  * @retval 1:有进位，已经溢出，结果不可信
  */
-unsigned char Add_Bcd( unsigned char *BufA, unsigned char *BufB, unsigned char Len )
+extern unsigned char Add_Bcd( unsigned char *BufA, unsigned char *BufB, unsigned char Len )
 {
     unsigned char i;
     unsigned char bf_carry;
@@ -333,7 +333,7 @@ unsigned char Add_Bcd( unsigned char *BufA, unsigned char *BufB, unsigned char L
  * @retval 0：代表被减数大于等于减数，结果值可信
  * @retval 1：代表被减数小于减数，结果值是通过向更高位借来的。	结果不可信
  */
-unsigned char Sub_Bcd( unsigned char *BufA, unsigned char *BufB, unsigned char Len )
+extern unsigned char Sub_Bcd( unsigned char *BufA, unsigned char *BufB, unsigned char Len )
 {
     unsigned char i,j,k;
     unsigned char bf_carry;
@@ -384,7 +384,7 @@ unsigned char Sub_Bcd( unsigned char *BufA, unsigned char *BufB, unsigned char L
  * @retval 0:代表数组元素为全零
  * @retval 1:代表数组元素存在非零
  */
- unsigned char ChkBufZero( unsigned char *Buf,unsigned char Len )
+extern unsigned char ChkBufZero( unsigned char *Buf,unsigned char Len )
 {
     unsigned char i;
 
@@ -407,7 +407,7 @@ unsigned char Sub_Bcd( unsigned char *BufA, unsigned char *BufB, unsigned char L
  * @retval 2:A<B
  * @retval 3:A=B
  */
-unsigned char Cmp_Data( unsigned char *BufA, unsigned char *BufB, unsigned char Len )
+extern unsigned char Cmp_Data( unsigned char *BufA, unsigned char *BufB, unsigned char Len )
 {
     unsigned char i;
 
@@ -440,7 +440,7 @@ unsigned char Cmp_Data( unsigned char *BufA, unsigned char *BufB, unsigned char 
  * @retval 1：A>B
  * @retval 2：A<B
  */
-unsigned char Cmp_Bcd_Inv( unsigned char *BcdA, unsigned char *BcdB, unsigned char Len )
+extern unsigned char Cmp_Bcd_Inv( unsigned char *BcdA, unsigned char *BcdB, unsigned char Len )
 {
     unsigned char i;
 
@@ -471,7 +471,7 @@ unsigned char Cmp_Bcd_Inv( unsigned char *BcdA, unsigned char *BcdB, unsigned ch
  * @param  Len: 数组长度
  * @retval None
  */
-void SwapData( unsigned char* Dest, int Len )
+extern void SwapData( unsigned char* Dest, int Len )
 {
 	unsigned char Temp;
 	int i;

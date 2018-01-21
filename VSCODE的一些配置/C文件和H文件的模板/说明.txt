@@ -9,3 +9,4 @@
 3、名称：C/C++ Clang Command Adapter      作者：Yasuaki MITANI
 4、名称：C/C++ Snippets                   作者：Harsh
 5、名称：GBKtoUTF8                        作者：bukas
+6、名称：FunctionList                     作者：HungVo
